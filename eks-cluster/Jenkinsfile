@@ -14,87 +14,110 @@ properties([
     ])
 ])
 
-environment {
-    AWS_REGION = 'us-west-2'
-}
-
-stages {
-
-    stage('Checkout Code') {
-        steps {
-            git branch: 'main',
-            url: 'https://github.com/srikanth240695/EKS-Terraform-Jenkins-GitHub-Actions.git'
-        }
+pipeline {
+    agent any
+    environment {
+        AWS_REGION = 'us-west-2'
     }
+    stages {
 
-    stage('Terraform Init') {
-        steps {
-            withAWS(credentials: 'aws-creds', region: 'us-west-2') {
-                sh 'terraform init'
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                url: 'https://github.com/srikanth240695/End-to-End-Kubernetes-Three-Tier-DevSecOps-Project.git'
             }
         }
-    }
 
-    stage('Terraform Format Check') {
-        steps {
-            sh 'terraform fmt -check'
+        stage('Debug Workspace') {
+                steps {
+                sh '''
+                pwd
+                ls -ltr
+                find . -name "*.tf"
+                '''
+            }
         }
-    }
 
-    stage('Terraform Validate') {
-        steps {
-            sh 'terraform validate'
+        stage('Terraform Init') {
+            steps {
+                dir('eks-cluster') {
+                    withAWS(credentials: 'aws-creds', region: 'us-west-2') {
+                        sh 'terraform init'
+                    }
+                }
+            }
         }
-    }
 
-    stage('Terraform Action') {
-        steps {
+        stage('Terraform Format Check') {
+            steps {
+                dir('eks-cluster') {
+                    withAWS(credentials: 'aws-creds', region: 'us-west-2') {
+                        sh 'terraform fmt -check'
+                    }
+                }
+            }
+        }
 
-            withAWS(credentials: 'aws-creds', region: 'us-west-2') {
+        stage('Terraform Validate') {
+            steps {
+                dir('eks-cluster') {
+                    withAWS(credentials: 'aws-creds', region: 'us-west-2') {
+                        sh 'terraform validate'
+                    }
+                }
+            }
+        }
 
-                script {
+        stage('Terraform Action') {
+            steps {
+                dir('eks-cluster') {
+                    withAWS(credentials: 'aws-creds', region: 'us-west-2') {
 
-                    if (params.Terraform_Action == 'plan') {
+                        script {
 
-                        sh """
-                        terraform plan \
-                        -var-file=${params.Environment}.tfvars
-                        """
+                            if (params.Terraform_Action == 'plan') {
 
-                    } else if (params.Terraform_Action == 'apply') {
+                                sh """
+                                terraform plan \
+                                -var-file=${params.Environment}.tfvars
+                                """
 
-                        sh """
-                        terraform apply \
-                        -var-file=${params.Environment}.tfvars \
-                        -auto-approve
-                        """
+                            } else if (params.Terraform_Action == 'apply') {
 
-                    } else if (params.Terraform_Action == 'destroy') {
+                                sh """
+                                terraform apply \
+                                -var-file=${params.Environment}.tfvars \
+                                -auto-approve
+                                """
 
-                        sh """
-                        terraform destroy \
-                        -var-file=${params.Environment}.tfvars \
-                        -auto-approve
-                        """
+                            } else if (params.Terraform_Action == 'destroy') {
 
-                    } else {
+                                sh """
+                                terraform destroy \
+                                -var-file=${params.Environment}.tfvars \
+                                -auto-approve
+                                """
 
-                        error "Invalid Terraform Action"
+                            } else {
 
+                                error "Invalid Terraform Action"
+                            }
+                        }
                     }
                 }
             }
         }
     }
-}
 
-post {
 
-    success {
-        echo 'Terraform pipeline executed successfully!'
-    }
+    post {
 
-    failure {
-        echo 'Terraform pipeline failed!'
+        success {
+            echo 'Terraform pipeline executed successfully!'
+        }
+
+        failure {
+            echo 'Terraform pipeline failed!'
+        }
     }
 }
