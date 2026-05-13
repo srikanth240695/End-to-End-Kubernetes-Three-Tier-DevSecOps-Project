@@ -10,7 +10,7 @@ variable "cluster_name" {
 
 variable "kubernetes_version" {
   description = "EKS Kubernetes version"
-  type = string
+  type        = string
 }
 
 variable "endpoint_private_access" {
@@ -25,7 +25,7 @@ variable "endpoint_public_access" {
 
 variable "addons" {
   type = list(object({
-    name    = string
+    name = string
   }))
 }
 
@@ -79,5 +79,5 @@ variable "private_subnet_ids" {
 
 variable "eks_cluster_security_group_id" {
   description = "Security group ID for EKS cluster"
-  type = string
+  type        = string
 }

@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "eks_oidc_assume_role_policy" {
 data "aws_iam_policy_document" "ebs_csi_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect = "Allow"
+    effect  = "Allow"
     principals {
       type = "Federated"
       identifiers = [
@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "ebs_csi_assume_role_policy" {
       ]
     }
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "${replace(aws_iam_openid_connect_provider.eks_oidc_provider.url, "https://", "")}:sub"
       values = [
         "system:serviceaccount:kube-system:ebs-csi-controller-sa"

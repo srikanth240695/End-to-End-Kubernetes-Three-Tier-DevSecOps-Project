@@ -9,8 +9,8 @@ variable "environment" {
 }
 
 variable "vpc_cidr_block" {
-    description = "The CIDR block for the VPC"
-    type        = string
+  description = "The CIDR block for the VPC"
+  type        = string
 }
 
 variable "public_subnet_cidrs" {
@@ -30,5 +30,5 @@ variable "private_subnet_cidrs" {
 
 output "eks_cluster_security_group_id" {
   description = "Security group ID for EKS cluster"
-  value = aws_security_group.eks_cluster_sg.id
+  value       = aws_security_group.eks_cluster_sg.id
 }
