@@ -27,7 +27,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./Jenkins-Server
+        working-directory: Jenkins-Server
 
     env:
       AWS_REGION: us-west-2
