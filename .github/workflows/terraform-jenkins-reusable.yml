@@ -32,7 +32,6 @@ jobs:
     environment: ${{ inputs.environment }}
 
     defaults:
-      run:
         working-directory: ./jenkins-server
 
     steps:
