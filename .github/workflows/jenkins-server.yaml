@@ -45,15 +45,15 @@ jobs:
         run: |
           if [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
-            echo "TFVARS=jenkins-dev.tfvars" >> $GITHUB_ENV
+            echo "TFVARS=env/jenkins-dev.tfvars" >> $GITHUB_ENV
 
           elif [[ "${GITHUB_REF_NAME}" == "nonprod" ]]; then
             echo "ENVIRONMENT=nonprod" >> $GITHUB_ENV
-            echo "TFVARS=jenkins-nonprod.tfvars" >> $GITHUB_ENV
+            echo "TFVARS=env/jenkins-nonprod.tfvars" >> $GITHUB_ENV
 
           elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "ENVIRONMENT=prod" >> $GITHUB_ENV
-            echo "TFVARS=jenkins-prod.tfvars" >> $GITHUB_ENV
+            echo "TFVARS=env/jenkins-prod.tfvars" >> $GITHUB_ENV
 
           fi
 
@@ -61,15 +61,15 @@ jobs:
 
             if [[ "${{ github.event.inputs.environment }}" == "dev" ]]; then
               echo "ENVIRONMENT=dev" >> $GITHUB_ENV
-              echo "TFVARS=jenkins-dev.tfvars" >> $GITHUB_ENV
+              echo "TFVARS=env/jenkins-dev.tfvars" >> $GITHUB_ENV
 
             elif [[ "${{ github.event.inputs.environment }}" == "nonprod" ]]; then
               echo "ENVIRONMENT=nonprod" >> $GITHUB_ENV
-              echo "TFVARS=jenkins-nonprod.tfvars" >> $GITHUB_ENV
+              echo "TFVARS=env/jenkins-nonprod.tfvars" >> $GITHUB_ENV
 
             elif [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
               echo "ENVIRONMENT=prod" >> $GITHUB_ENV
-              echo "TFVARS=jenkins-prod.tfvars" >> $GITHUB_ENV
+              echo "TFVARS=env/jenkins-prod.tfvars" >> $GITHUB_ENV
 
             fi
           fi
