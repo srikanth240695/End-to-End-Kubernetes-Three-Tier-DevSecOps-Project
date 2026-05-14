@@ -1,3 +1,4 @@
+
 # For Jenkins CICD
 server_name          = "jenkins-server"
 environment          = "dev"
