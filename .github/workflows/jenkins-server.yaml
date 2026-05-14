@@ -46,14 +46,17 @@ jobs:
           if [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
             echo "TFVARS=env/jenkins-dev.tfvars" >> $GITHUB_ENV
+            echo "BACKEND_CONFIG=backend/dev.hcl" >> $GITHUB_ENV
 
           elif [[ "${GITHUB_REF_NAME}" == "nonprod" ]]; then
             echo "ENVIRONMENT=nonprod" >> $GITHUB_ENV
             echo "TFVARS=env/jenkins-nonprod.tfvars" >> $GITHUB_ENV
+            echo "BACKEND_CONFIG=backend/nonprod.hcl" >> $GITHUB_ENV
 
           elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "ENVIRONMENT=prod" >> $GITHUB_ENV
             echo "TFVARS=env/jenkins-prod.tfvars" >> $GITHUB_ENV
+            echo "BACKEND_CONFIG=backend/prod.hcl" >> $GITHUB_ENV
 
           fi
 
@@ -62,17 +65,25 @@ jobs:
             if [[ "${{ github.event.inputs.environment }}" == "dev" ]]; then
               echo "ENVIRONMENT=dev" >> $GITHUB_ENV
               echo "TFVARS=env/jenkins-dev.tfvars" >> $GITHUB_ENV
+              echo "BACKEND_CONFIG=backend/dev.hcl" >> $GITHUB_ENV
 
             elif [[ "${{ github.event.inputs.environment }}" == "nonprod" ]]; then
               echo "ENVIRONMENT=nonprod" >> $GITHUB_ENV
               echo "TFVARS=env/jenkins-nonprod.tfvars" >> $GITHUB_ENV
+              echo "BACKEND_CONFIG=backend/nonprod.hcl" >> $GITHUB_ENV
 
             elif [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
               echo "ENVIRONMENT=prod" >> $GITHUB_ENV
               echo "TFVARS=env/jenkins-prod.tfvars" >> $GITHUB_ENV
+              echo "BACKEND_CONFIG=backend/prod.hcl" >> $GITHUB_ENV
 
             fi
           fi
+      - name: Debug Environment
+        run: |
+          echo "ENVIRONMENT=${{ env.ENVIRONMENT }}"
+          echo "TFVARS=${{ env.TFVARS }}"
+          echo "BACKEND_CONFIG=${{ env.BACKEND_CONFIG }}"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -85,7 +96,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -reconfigure -backend-config=${{ env.BACKEND_CONFIG }}
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
