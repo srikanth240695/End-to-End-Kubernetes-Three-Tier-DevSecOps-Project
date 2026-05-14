@@ -1,0 +1,66 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches:
+      - develop
+      - nonprod
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+# =========================================================
+# DEV DEPLOYMENT
+# =========================================================
+
+  terraform-dev:
+    if: github.ref_name == 'develop'
+
+    uses: ./.github/workflows/reusable-terraform.yml
+
+    with:
+      environment: dev
+      tfvars_file: env/jenkins-dev.tfvars
+      backend_config: backend/dev.hcl
+
+    secrets: inherit
+
+
+# =========================================================
+# NONPROD DEPLOYMENT
+# =========================================================
+
+  terraform-nonprod:
+    if: github.ref_name == 'nonprod'
+
+    uses: ./.github/workflows/reusable-terraform.yml
+
+    with:
+      environment: nonprod
+      tfvars_file: env/jenkins-nonprod.tfvars
+      backend_config: backend/nonprod.hcl
+
+    secrets: inherit
+
+
+# =========================================================
+# PROD DEPLOYMENT
+# =========================================================
+
+  terraform-prod:
+    if: github.ref_name == 'main'
+
+    environment: prod
+
+    uses: ./.github/workflows/reusable-terraform.yml
+
+    with:
+      environment: prod
+      tfvars_file: env/jenkins-prod.tfvars
+      backend_config: backend/prod.hcl
+
+    secrets: inherit
