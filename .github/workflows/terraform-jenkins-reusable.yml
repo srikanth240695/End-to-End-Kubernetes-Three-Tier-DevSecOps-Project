@@ -109,6 +109,6 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply \
+          terraform destroy \
           -auto-approve \
           -var-file=${{ inputs.tfvars_file }}
