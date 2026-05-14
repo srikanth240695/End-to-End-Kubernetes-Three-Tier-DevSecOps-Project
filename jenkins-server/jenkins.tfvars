@@ -1,3 +1,5 @@
+
+# For Jenkins CICD
 server_name          = "jenkins-server"
 environment          = "dev"
 vpc_cidr_block       = "12.0.0.0/16"
