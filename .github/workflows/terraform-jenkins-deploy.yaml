@@ -20,7 +20,7 @@ jobs:
   terraform-dev:
     if: github.ref_name == 'develop'
 
-    uses: ./.github/workflows/reusable-terraform.yml
+    uses: ./.github/workflows/terraform-jenkins-reusable.yaml
 
     with:
       environment: dev
@@ -37,7 +37,7 @@ jobs:
   terraform-nonprod:
     if: github.ref_name == 'nonprod'
 
-    uses: ./.github/workflows/reusable-terraform.yml
+    uses: ./.github/workflows/terraform-jenkins-reusable.yaml
 
     with:
       environment: nonprod
@@ -56,7 +56,7 @@ jobs:
 
     environment: prod
 
-    uses: ./.github/workflows/reusable-terraform.yml
+    uses: ./.github/workflows/terraform-jenkins-reusable.yaml
 
     with:
       environment: prod
