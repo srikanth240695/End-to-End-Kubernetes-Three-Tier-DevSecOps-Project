@@ -120,7 +120,7 @@ jobs:
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: Srikanth_Hurali
+          approvers: srikanth240695
           minimum-approvals: 1
           issue-title: "Production Terraform Apply Approval Required"
 
