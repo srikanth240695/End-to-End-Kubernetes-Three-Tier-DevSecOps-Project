@@ -5,13 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'jenkins-Server/**'
+      - 'jenkins-server/**'
 
   pull_request:
     branches:
       - main
     paths:
-      - 'jenkins,-Server/**'
+      - 'jenkins-server/**'
 
   workflow_dispatch:
 
@@ -27,7 +27,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./jenkins-Server
+        working-directory: ./jenkins-server
 
     env:
       AWS_REGION: us-west-2
@@ -69,7 +69,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./jenkins-Server
+        working-directory: ./jenkins-server
 
     env:
       AWS_REGION: us-west-2
