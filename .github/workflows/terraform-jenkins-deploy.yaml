@@ -6,7 +6,16 @@ on:
       - develop
       - nonprod
       - main
-
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select Environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - nonprod
+          - prod
 permissions:
   id-token: write
   contents: read
