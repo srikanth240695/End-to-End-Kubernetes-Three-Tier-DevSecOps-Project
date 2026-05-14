@@ -34,11 +34,11 @@ variable "security_group_id" {
 }
 
 variable "vpc_id" {
-    description = "The ID of the VPC where the EC2 instance will be launched"
-    type        = string
+  description = "The ID of the VPC where the EC2 instance will be launched"
+  type        = string
 }
 
 variable "public_subnet_ids" {
-    description = "The IDs of the subnets where the EC2 instance will be launched"
-    type        = string
+  description = "The IDs of the subnets where the EC2 instance will be launched"
+  type        = string
 }

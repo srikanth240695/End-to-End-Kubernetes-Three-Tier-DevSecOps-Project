@@ -9,8 +9,8 @@ variable "environment" {
 }
 
 variable "vpc_cidr_block" {
-    description = "The CIDR block for the VPC"
-    type        = string
+  description = "The CIDR block for the VPC"
+  type        = string
 }
 
 variable "public_subnet_cidrs" {

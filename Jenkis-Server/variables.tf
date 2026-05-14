@@ -4,8 +4,8 @@ variable "aws_region" {
 }
 
 variable "vpc_cidr_block" {
-    description = "The CIDR block for the VPC"
-    type        = string
+  description = "The CIDR block for the VPC"
+  type        = string
 }
 
 variable "environment" {
@@ -13,10 +13,10 @@ variable "environment" {
   type        = string
 }
 
-variable "server_name" { 
+variable "server_name" {
   description = "The name of the server"
   type        = string
-  
+
 }
 
 variable "instance_type" {
@@ -26,7 +26,7 @@ variable "instance_type" {
 
 variable "ami_id" {
   description = "The AMI ID for the EC2 instance"
-  type        = string  
+  type        = string
 }
 
 variable "key_pair_name" {
@@ -40,11 +40,11 @@ variable "availability_zone" {
 }
 
 variable "public_subnet_cidrs" {
-    type        = list(string)
-    description = "The list of CIDR blocks for public subnets from jenkins.tfvars"
+  type        = list(string)
+  description = "The list of CIDR blocks for public subnets from jenkins.tfvars"
 }
 
 variable "private_subnet_cidrs" {
-    type        = list(string)
-    description = "The list of CIDR blocks for private subnets from jenkins.tfvars"
+  type        = list(string)
+  description = "The list of CIDR blocks for private subnets from jenkins.tfvars"
 }
