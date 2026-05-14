@@ -1,41 +1,78 @@
-name: Jenkins Server Terraform Pipeline
+name: Jenkins Server Terraform Deployment
 
 on:
   push:
     branches:
+      - develop
+      - nonprod
       - main
-    paths:
-      - 'jenkins-server/**'
-
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'jenkins-server/**'
 
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select Environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - nonprod
+          - prod
 
 permissions:
   id-token: write
   contents: read
 
+env:
+  AWS_REGION: us-west-2
+
 jobs:
 
-  terraform-plan:
-    name: Terraform Plan
+  terraform:
+    name: Terraform Deployment
     runs-on: ubuntu-latest
 
     defaults:
       run:
         working-directory: ./jenkins-server
 
-    env:
-      AWS_REGION: us-west-2
-
     steps:
 
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Determine Environment
+        id: env
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+            echo "TFVARS=jenkins-dev.tfvars" >> $GITHUB_ENV
+
+          elif [[ "${GITHUB_REF_NAME}" == "nonprod" ]]; then
+            echo "ENVIRONMENT=nonprod" >> $GITHUB_ENV
+            echo "TFVARS=jenkins-nonprod.tfvars" >> $GITHUB_ENV
+
+          elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+            echo "TFVARS=jenkins-prod.tfvars" >> $GITHUB_ENV
+
+          fi
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+
+            if [[ "${{ github.event.inputs.environment }}" == "dev" ]]; then
+              echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+              echo "TFVARS=jenkins-dev.tfvars" >> $GITHUB_ENV
+
+            elif [[ "${{ github.event.inputs.environment }}" == "nonprod" ]]; then
+              echo "ENVIRONMENT=nonprod" >> $GITHUB_ENV
+              echo "TFVARS=jenkins-nonprod.tfvars" >> $GITHUB_ENV
+
+            elif [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
+              echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+              echo "TFVARS=jenkins-prod.tfvars" >> $GITHUB_ENV
+
+            fi
+          fi
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -51,46 +88,31 @@ jobs:
         run: terraform init
 
       - name: Terraform Format Check
-        run: terraform fmt -check
+        run: terraform fmt -check -recursive
 
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -var-file=jenkins.tfvars
+        run: terraform plan -var-file=${{ env.TFVARS }}
 
-  terraform-apply:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: terraform-plan
+      - name: Terraform Apply Dev
+        if: env.ENVIRONMENT == 'dev'
+        run: terraform apply -auto-approve -var-file=${{ env.TFVARS }}
 
-    environment:
-      name: production
+      - name: Terraform Apply NonProd
+        if: env.ENVIRONMENT == 'nonprod'
+        run: terraform apply -auto-approve -var-file=${{ env.TFVARS }}
 
-    defaults:
-      run:
-        working-directory: ./jenkins-server
-
-    env:
-      AWS_REGION: us-west-2
-
-    steps:
-
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Terraform Apply Prod
+        if: env.ENVIRONMENT == 'prod'
+        uses: trstringer/manual-approval@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          secret: ${{ github.TOKEN }}
+          approvers: Srikanth_Hurali
+          minimum-approvals: 1
+          issue-title: "Production Terraform Apply Approval Required"
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -var-file=jenkins.tfvars
+      - name: Terraform Apply Production
+        if: env.ENVIRONMENT == 'prod'
+        run: terraform apply -auto-approve -var-file=${{ env.TFVARS }}
