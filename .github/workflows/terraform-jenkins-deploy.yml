@@ -44,7 +44,7 @@ jobs:
       environment: dev
       tfvars_file: env/jenkins-dev.tfvars
       backend_config: backend/dev.hcl
-      terraform_action: apply 
+      terraform_action: destroy 
 
     secrets: inherit
 
