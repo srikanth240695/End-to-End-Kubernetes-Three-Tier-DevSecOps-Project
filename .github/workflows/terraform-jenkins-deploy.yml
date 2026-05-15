@@ -76,7 +76,7 @@ jobs:
       environment: prod
       tfvars_file: env/jenkins-prod.tfvars
       backend_config: backend/prod.hcl
-      terraform_action: apply
+      terraform_action: destroy
 
     secrets: inherit
 
