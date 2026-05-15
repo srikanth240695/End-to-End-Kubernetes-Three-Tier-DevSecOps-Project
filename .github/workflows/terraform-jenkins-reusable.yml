@@ -23,6 +23,7 @@ jobs:
   terraform:
     name: Terraform Deployment
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     concurrency:
       group: terraform-${{ inputs.environment }}
       cancel-in-progress: false
@@ -61,6 +62,5 @@ jobs:
       - name: Terraform Destroy
         if: inputs.terraform_action == 'destroy'
         run: |
-          terraform destroy \
-          -auto-approve \
+          terraform destroy -auto-approve \
           -var-file=${{ inputs.tfvars_file }}
