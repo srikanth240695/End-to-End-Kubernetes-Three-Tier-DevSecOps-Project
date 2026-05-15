@@ -1,3 +1,5 @@
+# terraform-jenkins-deploy.yml
+
 name: Terraform Deployment
 
 on:
@@ -6,6 +8,7 @@ on:
       - develop
       - nonprod
       - main
+
   workflow_dispatch:
     inputs:
       environment:
@@ -16,15 +19,19 @@ on:
           - dev
           - nonprod
           - prod
+      action:
+        description: "Terraform Action"
+        required: true
+        type: choice
+        options:
+          - apply
+          - destroy
+
 permissions:
   id-token: write
   contents: read
 
 jobs:
-
-# =========================================================
-# DEV DEPLOYMENT
-# =========================================================
 
   terraform-dev:
     if: |
@@ -37,13 +44,10 @@ jobs:
       environment: dev
       tfvars_file: env/jenkins-dev.tfvars
       backend_config: backend/dev.hcl
+      terraform_action: apply 
 
     secrets: inherit
 
-
-# =========================================================
-# NONPROD DEPLOYMENT
-# =========================================================
 
   terraform-nonprod:
     if: |
@@ -56,13 +60,10 @@ jobs:
       environment: nonprod
       tfvars_file: env/jenkins-nonprod.tfvars
       backend_config: backend/nonprod.hcl
+      terraform_action: apply
 
     secrets: inherit
 
-
-# =========================================================
-# PROD DEPLOYMENT
-# =========================================================
 
   terraform-prod:
     if: |
@@ -75,5 +76,9 @@ jobs:
       environment: prod
       tfvars_file: env/jenkins-prod.tfvars
       backend_config: backend/prod.hcl
+      terraform_action: apply
 
     secrets: inherit
+
+
+
