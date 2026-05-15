@@ -23,6 +23,7 @@ jobs:
   terraform:
     name: Terraform Deployment
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     concurrency:
       group: terraform-${{ inputs.environment }}
       cancel-in-progress: false
