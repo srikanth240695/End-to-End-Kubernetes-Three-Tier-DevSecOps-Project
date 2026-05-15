@@ -44,7 +44,7 @@ jobs:
       environment: dev
       tfvars_file: env/jenkins-dev.tfvars
       backend_config: backend/dev.hcl
-      terraform_action: ${{ github.event.inputs.action || 'apply' }}
+      terraform_action: apply 
 
     secrets: inherit
 
@@ -60,7 +60,7 @@ jobs:
       environment: nonprod
       tfvars_file: env/jenkins-nonprod.tfvars
       backend_config: backend/nonprod.hcl
-      terraform_action: ${{ github.event.inputs.action || 'apply' }}
+      terraform_action: apply
 
     secrets: inherit
 
@@ -76,7 +76,7 @@ jobs:
       environment: prod
       tfvars_file: env/jenkins-prod.tfvars
       backend_config: backend/prod.hcl
-      terraform_action: ${{ github.event.inputs.action || 'apply' }}
+      terraform_action: apply
 
     secrets: inherit
 
